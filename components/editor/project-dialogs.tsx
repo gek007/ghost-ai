@@ -67,9 +67,15 @@ export function ProjectDialogs({
           />
           <p className="text-xs text-copy-muted">
             Slug:{" "}
-            <span className="font-mono text-copy-secondary">
-              {slug || "your-project-name"}
-            </span>
+            {slug || !name.trim() ? (
+              <span className="font-mono text-copy-secondary">
+                {slug || "your-project-name"}
+              </span>
+            ) : (
+              <span className="text-state-warning">
+                unavailable — use letters or numbers (a–z, 0–9)
+              </span>
+            )}
           </p>
         </form>
       </EditorDialog>
@@ -111,7 +117,7 @@ export function ProjectDialogs({
         title="Delete project"
         description={
           dialog?.type === "delete"
-            ? `Delete “${dialog.project.name}”? This action cannot be undone.`
+            ? `Delete “${dialog.project.name}”? This removes it from the list until you reload the page, since projects are mock data for now.`
             : undefined
         }
         footer={
