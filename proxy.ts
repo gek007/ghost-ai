@@ -1,19 +1,9 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { SIGN_IN_URL, SIGN_UP_URL } from "@/lib/auth-routes";
 
-const isPublicRoute = createRouteMatcher([
-  `${SIGN_IN_URL}(.*)`,
-  `${SIGN_UP_URL}(.*)`,
-]);
-
-export default clerkMiddleware(
-  async (auth, request) => {
-    if (!isPublicRoute(request)) {
-      await auth.protect();
-    }
-  },
-  { signInUrl: SIGN_IN_URL, signUpUrl: SIGN_UP_URL },
-);
+// Early-redirect/session layer only. Authorization is enforced inside each
+// protected page, route handler, and Server Function via `await auth.protect()`.
+export default clerkMiddleware({ signInUrl: SIGN_IN_URL, signUpUrl: SIGN_UP_URL });
 
 export const config = {
   matcher: [

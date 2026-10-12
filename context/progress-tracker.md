@@ -29,14 +29,15 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] Install `@clerk/nextjs` and `@clerk/ui`
 - [x] `ClerkProvider` in root layout inside `<Suspense>` (required by cacheComponents)
 - [x] Clerk `dark` theme + CSS-variable appearance in `lib/clerk-appearance.ts`
-- [x] `proxy.ts` at project root: protect all routes except sign-in/sign-up
+- [x] `proxy.ts` at project root: bare `clerkMiddleware()` (session + early redirect only, no route matcher protection)
+- [x] Resource-level auth: `await auth.protect()` in `/editor` page; required in every protected page, route handler, and Server Function going forward
 - [x] `lib/auth-routes.ts`: sign-in/up URLs from env with `/sign-in` / `/sign-up` fallback, passed to `clerkMiddleware` and `ClerkProvider`
 - [x] `/sign-in` and `/sign-up` pages with two-panel `components/auth/auth-layout.tsx`
 - [x] `/` redirects to `/editor` (signed in) or `/sign-in` (signed out)
 - [x] Editor moved to `/editor`
 - [x] `UserButton` in editor navbar right section
 - [x] `npm run build` passes
-- [x] Production server check: `/` and `/editor` → 307 `/sign-in`; `/sign-in` and `/sign-up` → 200
+- [x] Production server check: `/editor` streams a redirect to `/sign-in` with no editor content in the response (200 status because PPR streams the redirect); `/sign-in` and `/sign-up` → 200
 - [ ] Manual browser check: sign up a test user, confirm redirect to `/editor` and `UserButton` appears
 
 ### Feature 04
@@ -53,6 +54,8 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - Sidebar is `absolute` inside the editor `main` (overlay, never pushes content); closed state uses `inert` + translate.
 - Dialog pattern wraps shadcn Dialog in `EditorDialog` rather than editing `components/ui/dialog.tsx`.
 - Do not modify generated components/ui/* files after shadcn installation.
+
+- Middleware/proxy is never the sole auth boundary: every protected page, route handler, and Server Function calls `await auth.protect()` itself.
 
 ## Session Notes
 
