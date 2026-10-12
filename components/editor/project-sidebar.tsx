@@ -11,6 +11,8 @@ interface ProjectSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   projects: Project[];
+  selectedProjectId: string | null;
+  onSelectProject: (project: Project) => void;
   onCreateProject: () => void;
   onRenameProject: (project: Project) => void;
   onDeleteProject: (project: Project) => void;
@@ -34,18 +36,39 @@ function EmptyState({ icon, title, description }: EmptyStateProps) {
 
 interface ProjectItemProps {
   project: Project;
+  isSelected: boolean;
+  onSelect: (project: Project) => void;
   onRename: (project: Project) => void;
   onDelete: (project: Project) => void;
 }
 
-function ProjectItem({ project, onRename, onDelete }: ProjectItemProps) {
+function ProjectItem({
+  project,
+  isSelected,
+  onSelect,
+  onRename,
+  onDelete,
+}: ProjectItemProps) {
   const isOwner = project.role === "owner";
 
   return (
-    <li className="group flex items-center gap-1 rounded-xl px-3 py-1.5 hover:bg-subtle">
-      <span className="min-w-0 flex-1 truncate text-sm text-copy-secondary">
+    <li
+      className={cn(
+        "group flex items-center gap-1 rounded-xl px-3 py-1.5 hover:bg-subtle",
+        isSelected && "bg-accent-dim hover:bg-accent-dim",
+      )}
+    >
+      <button
+        type="button"
+        aria-current={isSelected ? "true" : undefined}
+        onClick={() => onSelect(project)}
+        className={cn(
+          "min-w-0 flex-1 truncate rounded-lg py-1 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          isSelected ? "text-brand" : "text-copy-secondary",
+        )}
+      >
         {project.name}
-      </span>
+      </button>
       {isOwner && (
         <div className="flex shrink-0 items-center opacity-100 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
           <Button
@@ -76,6 +99,8 @@ export function ProjectSidebar({
   isOpen,
   onClose,
   projects,
+  selectedProjectId,
+  onSelectProject,
   onCreateProject,
   onRenameProject,
   onDeleteProject,
@@ -89,6 +114,8 @@ export function ProjectSidebar({
         <ProjectItem
           key={project.id}
           project={project}
+          isSelected={project.id === selectedProjectId}
+          onSelect={onSelectProject}
           onRename={onRenameProject}
           onDelete={onDeleteProject}
         />

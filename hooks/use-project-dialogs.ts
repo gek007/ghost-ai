@@ -24,6 +24,7 @@ export function useProjectDialogs() {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
+  const slug = slugify(name);
 
   const openCreate = useCallback(() => {
     setName("");
@@ -47,6 +48,7 @@ export function useProjectDialogs() {
   const submit = useCallback(async () => {
     if (!dialog || isLoading) return;
     if (dialog.type !== "delete" && !name.trim()) return;
+    if (dialog.type === "create" && !slug) return;
 
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, MOCK_LATENCY_MS));
@@ -71,14 +73,14 @@ export function useProjectDialogs() {
     }
     setIsLoading(false);
     setDialog(null);
-  }, [dialog, isLoading, name]);
+  }, [dialog, isLoading, name, slug]);
 
   return {
     projects,
     dialog,
     name,
     setName,
-    slug: slugify(name),
+    slug,
     isLoading,
     openCreate,
     openRename,

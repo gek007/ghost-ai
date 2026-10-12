@@ -31,7 +31,9 @@ export function ProjectDialogs({
     if (!open) close();
   };
 
-  const canSubmit = name.trim().length > 0 && !isLoading;
+  const hasName = name.trim().length > 0;
+  const canCreate = hasName && slug.length > 0 && !isLoading;
+  const canRename = hasName && !isLoading;
 
   const cancel = (
     <Button variant="ghost" onClick={close} disabled={isLoading}>
@@ -49,7 +51,7 @@ export function ProjectDialogs({
         footer={
           <>
             {cancel}
-            <Button type="submit" form={FORM_ID} disabled={!canSubmit}>
+            <Button type="submit" form={FORM_ID} disabled={!canCreate}>
               {isLoading ? "Creating…" : "Create project"}
             </Button>
           </>
@@ -92,7 +94,7 @@ export function ProjectDialogs({
         footer={
           <>
             {cancel}
-            <Button type="submit" form={FORM_ID} disabled={!canSubmit}>
+            <Button type="submit" form={FORM_ID} disabled={!canRename}>
               {isLoading ? "Saving…" : "Rename"}
             </Button>
           </>
