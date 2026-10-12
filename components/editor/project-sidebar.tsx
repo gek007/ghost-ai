@@ -104,7 +104,7 @@ export function ProjectSidebar({
           aria-label="Close sidebar"
           tabIndex={-1}
           onClick={onClose}
-          className="absolute inset-0 z-10 bg-black/60 md:hidden"
+          className="absolute inset-0 z-10 bg-scrim md:hidden"
         />
       )}
       <aside
