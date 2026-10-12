@@ -1,25 +1,46 @@
 # Progress Tracker
 
-Update this file whenever the current phase, active feature, or implementation state changes.
+Update this file after every step: tick the checkbox when a step is done, and add new steps as features are scoped.
 
-## Current Phase
-- Feature 02 (Editor chrome) — complete
+## Status
 
-## Current Goal
-- Feature 03 (not started)
+- **Current phase:** Feature 03 (Auth) — complete
+- **Current goal:** Feature 04 (not started)
 
-## Completed
+## To-Do
 
-- Feature 01: Design System — shadcn/ui (v4.21, base-nova style, @base-ui/react) initialized for Tailwind v4; Button/Card/Dialog/Input/Tabs/Textarea/ScrollArea added to components/ui/ (unmodified); lucide-react installed; lib/utils.ts re-exports cn() from the shadcn `cn` package (clsx + tailwind-merge replacement; `cn("p-2 p-4")` → `p-4`). globals.css is dark-only: ui-context tokens defined on :root, mapped via @theme inline (bg-base, text-copy-primary, border-surface-border, text-brand, etc.), shadcn variables pointed at those tokens, `.dark` block removed, circular --font-sans fixed; `dark` class set on <html> so generated dark: variants apply. `npm run build` passes.
-- Feature 02: Editor chrome — `components/editor/editor-navbar.tsx` (fixed h-14 navbar, left/center/right grid, sidebar toggle with PanelLeftOpen/PanelLeftClose, right/center empty), `project-sidebar.tsx` (absolute-positioned overlay that slides in from left, `isOpen`/`onClose` props, Projects header + close button, shadcn Tabs My Projects/Shared with empty states, full-width New Project button with Plus icon), `editor-dialog.tsx` (token-styled dialog pattern with title, description, body, footer actions; no concrete dialogs yet), plus `editor-shell.tsx` (client state holder) mounted at `/editor`. tsc, eslint, and `npm run build` pass.
+### Feature 01: Design System
+- [x] Initialize shadcn/ui (v4.21, base-nova, @base-ui/react) for Tailwind v4
+- [x] Add Button, Card, Dialog, Input, Tabs, Textarea, ScrollArea to `components/ui/` (unmodified)
+- [x] Install lucide-react
+- [x] `lib/utils.ts` re-exports `cn()` from the shadcn `cn` package
+- [x] Dark-only `globals.css`: ui-context tokens on `:root`, mapped via `@theme inline`, shadcn variables pointed at tokens, `.dark` block removed, circular `--font-sans` fixed
+- [x] `dark` class set on `<html>` so generated `dark:` variants apply
+- [x] `npm run build` passes
 
-## In Progress
+### Feature 02: Editor Chrome
+- [x] `editor-navbar.tsx`: fixed h-14 navbar, left/center/right grid, sidebar toggle (PanelLeftOpen/PanelLeftClose)
+- [x] `project-sidebar.tsx`: absolute overlay sliding from left, `isOpen`/`onClose` props, Projects header, Tabs (My Projects / Shared) with empty states, full-width New Project button
+- [x] `editor-dialog.tsx`: token-styled dialog pattern (title, description, body, footer actions)
+- [x] `editor-shell.tsx`: client state holder
+- [x] tsc, eslint, and `npm run build` pass
 
-- None.
+### Feature 03: Auth
+- [x] Install `@clerk/nextjs` and `@clerk/ui`
+- [x] `ClerkProvider` in root layout inside `<Suspense>` (required by cacheComponents)
+- [x] Clerk `dark` theme + CSS-variable appearance in `lib/clerk-appearance.ts`
+- [x] `proxy.ts` at project root: protect all routes except sign-in/sign-up
+- [x] `lib/auth-routes.ts`: sign-in/up URLs from env with `/sign-in` / `/sign-up` fallback, passed to `clerkMiddleware` and `ClerkProvider`
+- [x] `/sign-in` and `/sign-up` pages with two-panel `components/auth/auth-layout.tsx`
+- [x] `/` redirects to `/editor` (signed in) or `/sign-in` (signed out)
+- [x] Editor moved to `/editor`
+- [x] `UserButton` in editor navbar right section
+- [x] `npm run build` passes
+- [x] Production server check: `/` and `/editor` → 307 `/sign-in`; `/sign-in` and `/sign-up` → 200
+- [ ] Manual browser check: sign up a test user, confirm redirect to `/editor` and `UserButton` appears
 
-## Next Up
-
-- Feature 03
+### Feature 04
+- [ ] Not started
 
 ## Open Questions
 
