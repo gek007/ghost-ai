@@ -4,8 +4,8 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ## Status
 
-- **Current phase:** Feature 03 (Auth) — complete
-- **Current goal:** Feature 04 (not started)
+- **Current phase:** Feature 04 (Project dialogs) — complete
+- **Current goal:** Feature 05 (not scoped)
 
 ## To-Do
 
@@ -40,8 +40,14 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] Production server check: `/editor` streams a redirect to `/sign-in` with no editor content in the response (200 status because PPR streams the redirect); `/sign-in` and `/sign-up` → 200
 - [ ] Manual browser check: sign up a test user, confirm redirect to `/editor` and `UserButton` appears
 
-### Feature 04
-- [ ] Not started
+### Feature 04: Project Dialogs
+- [x] `EditorHome` centered heading/description/New Project button, wired to the Create dialog
+- [x] `hooks/use-project-dialogs.ts`: dialog, form (name), and loading state; mocked submit; projects held in in-memory state so create/rename/delete update the sidebar (no API/persistence, resets on reload)
+- [x] `project-dialogs.tsx`: Create (live slug preview via `lib/slugify.ts`), Rename (prefilled, autofocus, Enter submits, current name in description), Delete (destructive confirm, no input)
+- [x] Sidebar: mock projects (`lib/mock-projects.ts`), rename/delete actions for owned projects only, New Project wired to Create
+- [x] Mobile: backdrop scrim closes the sidebar on tap
+- [x] tsc and eslint pass
+- [ ] Manual browser check of dialogs and sidebar actions
 
 ## Open Questions
 
