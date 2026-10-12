@@ -1,11 +1,8 @@
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { SIGN_IN_URL } from "@/lib/auth-routes";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1>GHost AI</h1>
-      <Button className="bg-blue-500 text-white">Click me</Button>
-    </div>
-  );
+export default async function Home() {
+  const { userId } = await auth();
+  redirect(userId ? "/editor" : SIGN_IN_URL);
 }
