@@ -4,7 +4,7 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ## Status
 
-- **Current phase:** Feature 12 (Shape Panel) — implemented; manual check needs `LIVEBLOCKS_SECRET_KEY`
+- **Current phase:** Feature 14 (Node Editing) — implemented; browser check pending
 - **Current goal:** Verify Features 10-12 in the browser with a real key, then scope the next feature
 
 ## To-Do
@@ -120,6 +120,20 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] Liveblocks best-practices pass: `useErrorListener` connection guard in `canvas-room.tsx`, 403 body `{ error: "forbidden" }`, 502 on room-creation failure
 - [x] Code-review fixes: Clerk profile lookup by user ID with a capped cache, collision-proof node IDs (random suffix), `getLiveblocks()` inside the auth route's try/catch, connection error clears on reconnect and resets per room, shape tiles no longer claim button semantics
 - [ ] Manual check on the signed-in editor page: two browsers sync
+
+### Feature 13: Node Shape
+- [x] `components/canvas/node-shape.tsx`: `NodeShapeBody` renders rectangle/pill/circle with CSS (border + radius) and diamond/hexagon/cylinder as inline SVG (100x100 viewBox, `preserveAspectRatio="none"`, non-scaling 1px stroke so shapes scale with node size); border `surface-border` at rest, `brand` when selected; label color looked up from `NODE_COLORS`
+- [x] `canvas-node.tsx` uses `NodeShapeBody` with `data.shape`/`data.color` from the Liveblocks flow state
+- [x] `shape-drag-preview.ts`: `setDragImage` with an offscreen-rendered `NodeShapeBody` at the default size, centered on the cursor like the drop; the browser removes it on drop/cancel; drop logic unchanged
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check: all six shapes render, ghost follows cursor, selected border brightens
+
+### Feature 14: Node Editing
+- [x] `canvas-node.tsx`: `NodeResizer` visible only when selected, min 60x40, subtle brand-tinted line and small square handles; resize flows through `onNodesChange` into Liveblocks
+- [x] Inline label editing: double-click the label to open a textarea over it; an invisible mirror span sizes/centers it identically so there is no layout shift; empty labels show a faint "Label" placeholder in the same position
+- [x] Typing calls `useReactFlow().updateNodeData` (controlled mode, so it syncs through `onNodesChange`); closes on blur or `Escape`; `nodrag nopan nowheel` on the textarea, key events stop propagating
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check: resize, min size, double-click edit, Escape/blur, two browsers sync
 
 ## Open Questions
 

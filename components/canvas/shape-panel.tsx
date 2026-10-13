@@ -1,7 +1,15 @@
 "use client";
 
-import { Circle, Database, Diamond, Hexagon, Pill, RectangleHorizontal } from "lucide-react";
+import {
+  Circle,
+  Database,
+  Diamond,
+  Hexagon,
+  Pill,
+  RectangleHorizontal,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { setShapeDragPreview } from "@/components/canvas/shape-drag-preview";
 import {
   NODE_SHAPES,
   SHAPE_DEFAULT_SIZES,
@@ -23,6 +31,7 @@ function handleDragStart(event: React.DragEvent, shape: NodeShape) {
   const payload: ShapeDragPayload = { shape, ...SHAPE_DEFAULT_SIZES[shape] };
   event.dataTransfer.setData(SHAPE_DRAG_TYPE, JSON.stringify(payload));
   event.dataTransfer.effectAllowed = "move";
+  setShapeDragPreview(event, shape, payload);
 }
 
 export function ShapePanel() {
