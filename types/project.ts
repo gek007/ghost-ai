@@ -5,3 +5,8 @@ export interface Project {
   name: string;
   role: ProjectRole;
 }
+
+export interface UserProjects {
+  owned: Project[];
+  shared: Project[];
+}

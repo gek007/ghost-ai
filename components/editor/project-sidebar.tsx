@@ -10,7 +10,8 @@ import type { Project } from "@/types/project";
 interface ProjectSidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  projects: Project[];
+  ownedProjects: Project[];
+  sharedProjects: Project[];
   selectedProjectId: string | null;
   onSelectProject: (project: Project) => void;
   onCreateProject: () => void;
@@ -98,16 +99,14 @@ function ProjectItem({
 export function ProjectSidebar({
   isOpen,
   onClose,
-  projects,
+  ownedProjects: owned,
+  sharedProjects: shared,
   selectedProjectId,
   onSelectProject,
   onCreateProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
-  const owned = projects.filter((project) => project.role === "owner");
-  const shared = projects.filter((project) => project.role !== "owner");
-
   const renderList = (items: Project[]) => (
     <ul className="flex flex-col gap-0.5 p-2">
       {items.map((project) => (

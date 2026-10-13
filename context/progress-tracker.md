@@ -4,8 +4,8 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ## Status
 
-- **Current phase:** Feature 05 (Prisma) — complete
-- **Current goal:** Feature 06 (not scoped)
+- **Current phase:** Feature 08 (Editor Workspace Shell) — complete
+- **Current goal:** Feature 09 (not scoped)
 
 ## To-Do
 
@@ -55,6 +55,32 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] `prisma.config.ts` loads `.env.local` first (real `DATABASE_URL`), then `.env` (placeholder)
 - [x] Migration `init` applied, client generated to `app/generated/prisma`
 - [x] `npm run build` passes
+
+### Feature 06: Project APIs
+- [x] `GET/POST /api/projects` (list own projects, create with `ownerId` = Clerk user ID, default name `Untitled Project`, cuid IDs from schema)
+- [x] `PATCH/DELETE /api/projects/[projectId]`: 401 unauthenticated, 404 missing, 403 non-owner; writes also scoped by `ownerId`
+- [x] `lib/api-response.ts` (`getUserId`, `errorResponse`) and `lib/project-validation.ts` (name: trimmed, ≤100 chars, must have a slug, mirrors the UI rule)
+- [x] Handlers use `auth()` + explicit 401, not `auth.protect()` (which returns 404 for API requests)
+- [x] `postinstall` and `prebuild` run `prisma generate` (generated client is gitignored, so clean `npm ci && npm run build` works; verified with client deleted and no `.env.local`)
+- [x] tsc, eslint, `npm run build` pass; UI not wired (still mock data)
+- [ ] Manual check with a signed-in session (200/403 paths)
+
+### Feature 07: Wire Editor Home
+- [x] `lib/projects.ts` `getUserProjects(userId)`: owned projects + projects shared via `ProjectCollaborator` email (case-insensitive, from Clerk primary email)
+- [x] `/editor` and new `/editor/[roomId]` are server pages (`auth.protect()`, server-side fetch, `notFound()` if the user has no access); no client fetching on load
+- [x] `hooks/use-project-actions.ts` replaces the mock `use-project-dialogs`: create (name, short suffix, `slug-suffix` room ID, `POST`, navigate), rename (`PATCH`, refresh), delete (`DELETE`, redirect to `/editor` if active else refresh), inline API errors in dialogs
+- [x] `POST /api/projects` accepts an optional `id` (lowercase slug, ≤128) so project ID = Liveblocks room ID; duplicate → 409; omitted → cuid
+- [x] Sidebar takes `ownedProjects`/`sharedProjects`; create dialog shows room ID preview; mock projects removed
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check: create → workspace, rename, delete (active and inactive)
+
+### Feature 08: Editor Workspace Shell
+- [x] Route renamed to `/editor/[roomId]` (server component): `getIdentity()` redirects unauthenticated users to `/sign-in`; missing and unauthorized projects both render `AccessDenied` (no existence leak)
+- [x] `lib/project-access.ts`: `getIdentity()` (Clerk `userId` + primary email) and `getProjectAccess()` (owner or collaborator by case-insensitive email)
+- [x] `components/editor/access-denied.tsx`: centered lock icon, message, link back to `/editor`
+- [x] Workspace layout: navbar with project name, Share button (no behavior) and AI sidebar toggle; sidebar highlights the current room; canvas placeholder fills remaining space; collapsible right AI sidebar placeholder
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check: owner, collaborator, unauthorized and missing room IDs
 
 ## Open Questions
 
