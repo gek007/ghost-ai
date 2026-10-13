@@ -4,8 +4,8 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ## Status
 
-- **Current phase:** Feature 09 (Share Dialog) — implemented; manual browser check pending
-- **Current goal:** Verify Feature 09 in the browser, then scope the next feature
+- **Current phase:** Feature 12 (Shape Panel) — implemented; manual check needs `LIVEBLOCKS_SECRET_KEY`
+- **Current goal:** Verify Features 10-12 in the browser with a real key, then scope the next feature
 
 ## To-Do
 
@@ -91,6 +91,36 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] tsc, eslint, `npm run build` pass
 - [ ] Manual browser check: owner invite/remove, collaborator read-only view, Clerk names/avatars, copy link
 
+### Feature 10: Liveblocks Setup
+- [x] `@liveblocks/node` installed (it was not actually present, only client/react)
+- [x] `liveblocks.config.ts`: Presence (`cursor`, `isThinking`) and UserMeta (`id`, `info.name/avatar/color`)
+- [x] `lib/liveblocks.ts`: lazily cached node client (throws if `LIVEBLOCKS_SECRET_KEY` unset) and `getUserColor()` hash-to-palette helper
+- [x] `POST /api/liveblocks-auth`: 401 unauthenticated, 403 no project access (room ID = project ID), `getOrCreateRoom` (private), access-token session with name/avatar/color
+- [x] `lib/project-access.ts` `Identity` now carries `name` and `avatarUrl` from Clerk
+- [x] tsc and `npm run build` pass
+- [ ] Manual check with `LIVEBLOCKS_SECRET_KEY` set in `.env.local` (200 for member, 403 for others)
+
+### Feature 11: Base Canvas
+- [x] Installed `@xyflow/react`, `@liveblocks/react-flow`, `@liveblocks/react-ui`, `react-error-boundary`
+- [x] `types/canvas.ts`: `NODE_COLORS`, `NODE_SHAPES`, `CanvasNodeData` (label, color, shape), `CanvasNode` (`canvasNode`), `CanvasEdge` (`canvasEdge`)
+- [x] `components/canvas/canvas-room.tsx`: `LiveblocksProvider` (`/api/liveblocks-auth`), `RoomProvider` (room ID = project ID, presence `cursor: null`, `isThinking: false`), `ClientSideSuspense` loading state, `ErrorBoundary` connection fallback
+- [x] `components/canvas/canvas.tsx`: `useLiveblocksFlow` (suspense, empty initial nodes/edges) wired into `ReactFlow` with loose connections, `fitView`, `MiniMap`, dot `Background`
+- [x] Workspace page stays server-side; `editor-shell.tsx` renders `CanvasRoom` in place of the placeholder
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check with `LIVEBLOCKS_SECRET_KEY`: canvas loads, two browsers sync
+
+### Feature 12: Shape Panel
+- [x] `types/canvas.ts`: `SHAPE_DRAG_TYPE`, `ShapeDragPayload` (shape, width, height), `SHAPE_DEFAULT_SIZES` (rectangle 160x80, diamond 140x140, circle 100x100, pill 160x60, cylinder 120x100, hexagon 140x120)
+- [x] `components/canvas/shape-panel.tsx`: floating pill toolbar, bottom-center, six draggable icon buttons that set the payload on `dragstart`
+- [x] `canvas.tsx`: `ReactFlowProvider` wrapper; `dragover`/`drop` on the canvas wrapper, payload validated, `screenToFlowPosition`, node centered on the cursor and added via `onNodesChange([{ type: "add" }])` so it syncs through Liveblocks; ID `shape-timestamp-counter`, empty label, default color
+- [x] `components/canvas/canvas-node.tsx`: basic `canvasNode` renderer (bordered rectangle, centered label); shape visuals come later
+- [x] tsc, eslint, `npm run build` pass
+- [x] Verified with Playwright (Chromium, no-auth harness): all six shapes drop with correct sizes, select, and move; nodes persist in the room
+- [x] Fixes: canvas sized with `absolute inset-0` (React Flow error #004); shape icons are `div`s, not buttons (cross-browser drag); duplicate `LIVEBLOCKS_SECRET_KEY` in `.env.local` caused auth timeouts
+- [x] Liveblocks best-practices pass: `useErrorListener` connection guard in `canvas-room.tsx`, 403 body `{ error: "forbidden" }`, 502 on room-creation failure
+- [x] Code-review fixes: Clerk profile lookup by user ID with a capped cache, collision-proof node IDs (random suffix), `getLiveblocks()` inside the auth route's try/catch, connection error clears on reconnect and resets per room, shape tiles no longer claim button semantics
+- [ ] Manual check on the signed-in editor page: two browsers sync
+
 ## Open Questions
 
 - Spec 09 sets no limit on collaborators per project or on invite rate; none enforced.
@@ -104,6 +134,7 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - Do not modify generated components/ui/* files after shadcn installation.
 
 - Middleware/proxy is never the sole auth boundary: every protected page, route handler, and Server Function calls `await auth.protect()` itself.
+- Clerk profile (`currentUser()`, a rate-limited Backend API call) is fetched only through `loadIdentity` in `lib/project-access.ts`: per-render `cache()`, 60s in-memory TTL per user, stale entry served on Clerk errors (fixes 429 `too_many_requests` during dev reloads).
 
 ## Session Notes
 
