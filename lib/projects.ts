@@ -1,11 +1,10 @@
-import { currentUser } from "@clerk/nextjs/server";
+import { loadIdentity } from "@/lib/project-access";
 import { prisma } from "@/lib/prisma";
 import type { UserProjects } from "@/types/project";
 
 /** Projects the user owns, and projects shared with them by email as a collaborator. */
 export async function getUserProjects(userId: string): Promise<UserProjects> {
-  const user = await currentUser();
-  const email = user?.primaryEmailAddress?.emailAddress;
+  const { email } = await loadIdentity(userId);
 
   const [owned, shared] = await Promise.all([
     prisma.project.findMany({

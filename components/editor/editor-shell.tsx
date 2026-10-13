@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CanvasRoom } from "@/components/canvas/canvas-room";
 import { EditorHome } from "@/components/editor/editor-home";
 import { EditorNavbar } from "@/components/editor/editor-navbar";
 import { ProjectDialogs } from "@/components/editor/project-dialogs";
@@ -46,10 +47,8 @@ export function EditorShell({ projects, activeProjectId }: EditorShellProps) {
       <main className="relative flex-1 overflow-hidden">
         {activeProject ? (
           <div className="flex h-full">
-            <div className="flex min-w-0 flex-1 items-center justify-center bg-base px-6">
-              <p className="text-sm text-copy-muted">
-                Canvas for {activeProject.name} coming soon
-              </p>
+            <div className="relative min-w-0 flex-1 bg-base">
+              <CanvasRoom roomId={activeProject.id} />
             </div>
             <aside
               aria-label="AI assistant"
