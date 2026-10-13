@@ -4,8 +4,8 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ## Status
 
-- **Current phase:** Feature 05 (Prisma) — complete
-- **Current goal:** Feature 06 (not scoped)
+- **Current phase:** Feature 06 (Project APIs) — complete
+- **Current goal:** Feature 07 (not scoped)
 
 ## To-Do
 
@@ -55,6 +55,15 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] `prisma.config.ts` loads `.env.local` first (real `DATABASE_URL`), then `.env` (placeholder)
 - [x] Migration `init` applied, client generated to `app/generated/prisma`
 - [x] `npm run build` passes
+
+### Feature 06: Project APIs
+- [x] `GET/POST /api/projects` (list own projects, create with `ownerId` = Clerk user ID, default name `Untitled Project`, cuid IDs from schema)
+- [x] `PATCH/DELETE /api/projects/[projectId]`: 401 unauthenticated, 404 missing, 403 non-owner; writes also scoped by `ownerId`
+- [x] `lib/api-response.ts` (`getUserId`, `errorResponse`) and `lib/project-validation.ts` (name: trimmed, ≤100 chars, must have a slug, mirrors the UI rule)
+- [x] Handlers use `auth()` + explicit 401, not `auth.protect()` (which returns 404 for API requests)
+- [x] `postinstall` and `prebuild` run `prisma generate` (generated client is gitignored, so clean `npm ci && npm run build` works; verified with client deleted and no `.env.local`)
+- [x] tsc, eslint, `npm run build` pass; UI not wired (still mock data)
+- [ ] Manual check with a signed-in session (200/403 paths)
 
 ## Open Questions
 
