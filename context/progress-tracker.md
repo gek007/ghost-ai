@@ -4,8 +4,8 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ## Status
 
-- **Current phase:** Feature 04 (Project dialogs) — complete
-- **Current goal:** Feature 05 (not scoped)
+- **Current phase:** Feature 05 (Prisma) — complete
+- **Current goal:** Feature 06 (not scoped)
 
 ## To-Do
 
@@ -48,6 +48,13 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] Mobile: backdrop scrim closes the sidebar on tap
 - [x] tsc and eslint pass
 - [ ] Manual browser check of dialogs and sidebar actions
+
+### Feature 05: Prisma
+- [x] `prisma/models/project.prisma`: `ProjectStatus` enum, `Project`, `ProjectCollaborator` (cascade delete, unique project/email, indexes per spec)
+- [x] `lib/prisma.ts`: cached singleton (global in dev); `prisma+postgres://` uses `accelerateUrl`, otherwise `@prisma/adapter-pg`
+- [x] `prisma.config.ts` loads `.env.local` first (real `DATABASE_URL`), then `.env` (placeholder)
+- [x] Migration `init` applied, client generated to `app/generated/prisma`
+- [x] `npm run build` passes
 
 ## Open Questions
 
