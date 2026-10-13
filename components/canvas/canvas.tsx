@@ -8,15 +8,21 @@ import {
   ReactFlow,
   ReactFlowProvider,
   useReactFlow,
+  MarkerType,
+  type DefaultEdgeOptions,
+  type EdgeTypes,
   type NodeTypes,
+  type OnConnect,
 } from "@xyflow/react";
 import { useLiveblocksFlow } from "@liveblocks/react-flow";
 import { useRef } from "react";
 import "@xyflow/react/dist/style.css";
+import { CanvasEdgeView } from "@/components/canvas/canvas-edge";
 import { CanvasNodeView } from "@/components/canvas/canvas-node";
 import { ShapePanel } from "@/components/canvas/shape-panel";
 import {
   DEFAULT_NODE_COLOR,
+  EDGE_COLOR,
   NODE_SHAPES,
   SHAPE_DRAG_TYPE,
   type CanvasEdge,
@@ -25,6 +31,13 @@ import {
 } from "@/types/canvas";
 
 const nodeTypes: NodeTypes = { canvasNode: CanvasNodeView };
+const edgeTypes: EdgeTypes = { canvasEdge: CanvasEdgeView };
+
+const defaultEdgeOptions: DefaultEdgeOptions = {
+  type: "canvasEdge",
+  style: { stroke: EDGE_COLOR, strokeWidth: 1.5, strokeLinecap: "round" },
+  markerEnd: { type: MarkerType.ArrowClosed, color: EDGE_COLOR },
+};
 
 function parseDragPayload(raw: string): ShapeDragPayload | null {
   try {
@@ -47,12 +60,24 @@ function parseDragPayload(raw: string): ShapeDragPayload | null {
 function CanvasFlow() {
   const { screenToFlowPosition } = useReactFlow();
   const nodeCounter = useRef(0);
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onDelete } =
+  const { nodes, edges, onNodesChange, onEdgesChange, onDelete } =
     useLiveblocksFlow<CanvasNode, CanvasEdge>({
       suspense: true,
       nodes: { initial: [] },
       edges: { initial: [] },
     });
+
+  // The Liveblocks `onConnect` ignores `defaultEdgeOptions`, so new edges are added here.
+  const handleConnect: OnConnect = (connection) => {
+    const edge: CanvasEdge = {
+      ...defaultEdgeOptions,
+      ...connection,
+      id: `edge-${crypto.randomUUID()}`,
+      type: "canvasEdge",
+      data: {},
+    };
+    onEdgesChange([{ type: "add", item: edge }]);
+  };
 
   function handleDragOver(event: React.DragEvent) {
     if (!event.dataTransfer.types.includes(SHAPE_DRAG_TYPE)) return;
@@ -89,7 +114,9 @@ function CanvasFlow() {
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
+        onConnect={handleConnect}
+        edgeTypes={edgeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
         onDelete={onDelete}
         connectionMode={ConnectionMode.Loose}
         fitView
