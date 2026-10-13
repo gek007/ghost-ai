@@ -6,7 +6,7 @@ import {
   DEFAULT_PROJECT_NAME,
   parseJsonObject,
   parseProjectId,
-  parseProjectName,
+  parseNewProjectName,
 } from "@/lib/project-validation";
 
 export async function GET() {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   const body = text.trim() ? parseJsonObject(text) : {};
   if (!body) return errorResponse("Body must be a JSON object", 400);
 
-  const name = parseProjectName(body.name, DEFAULT_PROJECT_NAME);
+  const name = parseNewProjectName(body.name, DEFAULT_PROJECT_NAME);
   if (!name.ok) return errorResponse(name.error, 400);
   // The client may choose the ID so it can double as the Liveblocks room ID; otherwise the schema's cuid is used.
   const id = parseProjectId(body.id);

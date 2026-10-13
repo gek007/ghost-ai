@@ -12,6 +12,7 @@ interface EditorNavbarProps {
     projectName: string;
     isAiSidebarOpen: boolean;
     onToggleAiSidebar: () => void;
+    onShare: () => void;
   };
 }
 
@@ -46,7 +47,7 @@ export function EditorNavbar({
       <div className="flex items-center justify-end gap-2">
         {workspace && (
           <>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={workspace.onShare}>
               <Share2 className="h-4 w-4" />
               Share
             </Button>

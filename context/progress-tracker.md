@@ -4,8 +4,8 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ## Status
 
-- **Current phase:** Feature 08 (Editor Workspace Shell) — complete
-- **Current goal:** Feature 09 (not scoped)
+- **Current phase:** Feature 09 (Share Dialog) — implemented; manual browser check pending
+- **Current goal:** Verify Feature 09 in the browser, then scope the next feature
 
 ## To-Do
 
@@ -58,12 +58,13 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 
 ### Feature 06: Project APIs
 - [x] `GET/POST /api/projects` (list own projects, create with `ownerId` = Clerk user ID, default name `Untitled Project`, cuid IDs from schema)
-- [x] `PATCH/DELETE /api/projects/[projectId]`: 401 unauthenticated, 404 missing, 403 non-owner; writes also scoped by `ownerId`
+- [x] `PATCH/DELETE /api/projects/[projectId]`: 401 unauthenticated, 404 missing or non-owner (deliberate deviation from spec 06's 403, so project IDs cannot be probed); writes also scoped by `ownerId`
 - [x] `lib/api-response.ts` (`getUserId`, `errorResponse`) and `lib/project-validation.ts` (name: trimmed, ≤100 chars, must have a slug, mirrors the UI rule)
+- [x] Slug requirement applies only to creation (`parseNewProjectName`); `parseProjectName` used by rename accepts any non-empty name (e.g. 設計) since the room ID never changes
 - [x] Handlers use `auth()` + explicit 401, not `auth.protect()` (which returns 404 for API requests)
 - [x] `postinstall` and `prebuild` run `prisma generate` (generated client is gitignored, so clean `npm ci && npm run build` works; verified with client deleted and no `.env.local`)
 - [x] tsc, eslint, `npm run build` pass; UI not wired (still mock data)
-- [ ] Manual check with a signed-in session (200/403 paths)
+- [ ] Manual check with a signed-in session (200/404 paths)
 
 ### Feature 07: Wire Editor Home
 - [x] `lib/projects.ts` `getUserProjects(userId)`: owned projects + projects shared via `ProjectCollaborator` email (case-insensitive, from Clerk primary email)
@@ -82,9 +83,17 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] tsc, eslint, `npm run build` pass
 - [ ] Manual browser check: owner, collaborator, unauthorized and missing room IDs
 
+### Feature 09: Share Dialog
+- [x] `GET/POST /api/projects/[projectId]/collaborators` and `DELETE .../collaborators/[collaboratorId]`: GET open to owner and collaborators; POST/DELETE owner-only (403 for collaborators, 404 for non-members); emails normalized to lowercase, duplicate → 409, inviting yourself → 400
+- [x] `lib/collaborators.ts`: enriches emails with Clerk display name and avatar (`getUserList`, batched by 100); falls back to email only when no Clerk user matches or Clerk fails. No local user table
+- [x] `lib/project-access.ts`: `getRequestIdentity()` for route handlers (null instead of redirect)
+- [x] `ShareDialog` (mounted only while open) + `useShareDialog`: owners get invite form and remove buttons, collaborators see a read-only list; Copy link shows `Copied!` for 2s; navbar Share button opens it
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check: owner invite/remove, collaborator read-only view, Clerk names/avatars, copy link
+
 ## Open Questions
 
-- None yet.
+- Spec 09 sets no limit on collaborators per project or on invite rate; none enforced.
 
 ## Architecture Decisions
 

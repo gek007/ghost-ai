@@ -5,14 +5,16 @@ import { parseProjectName, parseJsonObject } from "@/lib/project-validation";
 
 type Context = { params: Promise<{ projectId: string }> };
 
-/** Returns an error response unless the project exists and belongs to `userId`. */
+/**
+ * Returns an error response unless the project exists and belongs to `userId`.
+ * Missing and not-owned projects both answer 404 so callers cannot probe which IDs exist.
+ */
 async function checkOwner(projectId: string, userId: string) {
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     select: { ownerId: true },
   });
-  if (!project) return errorResponse("Project not found", 404);
-  if (project.ownerId !== userId) return errorResponse("Forbidden", 403);
+  if (!project || project.ownerId !== userId) return errorResponse("Project not found", 404);
   return null;
 }
 
