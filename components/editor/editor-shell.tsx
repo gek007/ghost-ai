@@ -6,6 +6,7 @@ import { EditorHome } from "@/components/editor/editor-home";
 import { EditorNavbar } from "@/components/editor/editor-navbar";
 import { ProjectDialogs } from "@/components/editor/project-dialogs";
 import { ProjectSidebar } from "@/components/editor/project-sidebar";
+import { ShareDialog } from "@/components/editor/share-dialog";
 import { useProjectActions } from "@/hooks/use-project-actions";
 import { cn } from "@/lib/utils";
 import type { UserProjects } from "@/types/project";
@@ -19,6 +20,7 @@ export function EditorShell({ projects, activeProjectId }: EditorShellProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(true);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const projectActions = useProjectActions({ activeProjectId });
   const activeProject =
     [...projects.owned, ...projects.shared].find(
@@ -36,6 +38,7 @@ export function EditorShell({ projects, activeProjectId }: EditorShellProps) {
                 projectName: activeProject.name,
                 isAiSidebarOpen,
                 onToggleAiSidebar: () => setIsAiSidebarOpen((open) => !open),
+                onShare: () => setIsShareOpen(true),
               }
             : undefined
         }
@@ -84,6 +87,14 @@ export function EditorShell({ projects, activeProjectId }: EditorShellProps) {
         />
       </main>
       <ProjectDialogs {...projectActions} />
+      {activeProject && (
+        <ShareDialog
+          open={isShareOpen}
+          onOpenChange={setIsShareOpen}
+          projectId={activeProject.id}
+          isOwner={activeProject.role === "owner"}
+        />
+      )}
     </div>
   );
 }

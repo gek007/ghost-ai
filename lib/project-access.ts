@@ -50,3 +50,14 @@ export async function getProjectAccess(
     role: project.ownerId === userId ? "owner" : "collaborator",
   };
 }
+
+/**
+ * Like `getIdentity`, but for route handlers: returns `null` instead of
+ * redirecting so the caller can answer 401.
+ */
+export async function getRequestIdentity(): Promise<Identity | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+  const user = await currentUser();
+  return { userId, email: user?.primaryEmailAddress?.emailAddress ?? null };
+}
