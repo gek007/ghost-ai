@@ -1,9 +1,12 @@
 "use client";
 
-import { NodeResizer, useReactFlow, type NodeProps } from "@xyflow/react";
+import { Handle, NodeResizer, Position, useReactFlow, type NodeProps } from "@xyflow/react";
 import { useEffect, useRef, useState } from "react";
+import { NodeColorToolbar } from "@/components/canvas/node-color-toolbar";
 import { NodeShapeBody } from "@/components/canvas/node-shape";
 import type { CanvasNode } from "@/types/canvas";
+
+const HANDLE_POSITIONS = [Position.Top, Position.Right, Position.Bottom, Position.Left];
 
 const MIN_NODE_WIDTH = 60;
 const MIN_NODE_HEIGHT = 40;
@@ -83,9 +86,22 @@ export function CanvasNodeView({ id, data, selected }: NodeProps<CanvasNode>) {
         lineClassName="border-brand/30!"
         handleClassName="size-2! rounded-xs! border-brand! bg-surface!"
       />
-      <NodeShapeBody shape={data.shape} color={data.color} selected={selected}>
-        <NodeLabel id={id} label={data.label} />
-      </NodeShapeBody>
+      <NodeColorToolbar id={id} color={data.color} visible={selected} />
+      <div className="group/node size-full">
+        <NodeShapeBody shape={data.shape} color={data.color} selected={selected}>
+          <NodeLabel id={id} label={data.label} />
+        </NodeShapeBody>
+        {/* Loose connection mode lets any handle connect to any other handle. */}
+        {HANDLE_POSITIONS.map((position) => (
+          <Handle
+            key={position}
+            id={position}
+            type="source"
+            position={position}
+            className="size-2! border! border-base! bg-copy-primary! opacity-0 transition-opacity group-hover/node:opacity-100"
+          />
+        ))}
+      </div>
     </>
   );
 }

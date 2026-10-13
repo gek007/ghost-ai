@@ -135,6 +135,20 @@ Update this file after every step: tick the checkbox when a step is done, and ad
 - [x] tsc, eslint, `npm run build` pass
 - [ ] Manual browser check: resize, min size, double-click edit, Escape/blur, two browsers sync
 
+### Feature 15: Node Color Toolbar
+- [x] `components/canvas/node-color-toolbar.tsx`: React Flow `NodeToolbar` above the node (12px offset), shown only while selected; one swatch per `NODE_COLORS` pair (fill + text-color border); active swatch has a ring, hover shows a tight glow in the pair's text color; `nodrag nopan` on the toolbar
+- [x] Swatch click calls `updateNodeData(id, { color: fill })`; text color is already derived from the palette in `NodeShapeBody`, so both update together through the existing Liveblocks flow state (no server calls)
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check: toolbar on select, swatch changes fill and text, glow on hover, two browsers sync
+
+### Feature 16: Edge Behavior
+- [x] `canvas-node.tsx`: source handles on all four sides (small white dot, dark border), hidden until the node is hovered; `ConnectionMode.Loose` already lets any handle connect to any other
+- [x] `canvas-edge.tsx`: `CanvasEdgeView` with `getSmoothStepPath` right-angle routing, dimmed at rest and full opacity on hover/selection/editing, 20px invisible stroke as the hover/click/double-click target
+- [x] Inline label: `EdgeLabelRenderer` positioned at the `getSmoothStepPath` midpoint; double-click opens a growing input, saved on blur/Enter/Escape via `updateEdgeData` (existing Liveblocks edge flow); saved labels are pill badges, selected unlabeled edges show a faint hint; `nodrag nopan nowheel` on the label
+- [x] `canvas.tsx`: Liveblocks `onConnect` ignores `defaultEdgeOptions`, so `handleConnect` adds edges via `onEdgesChange` with type `canvasEdge`, light rounded stroke and arrow marker; `CanvasEdgeData`/`EDGE_COLOR` added to `types/canvas.ts`
+- [x] tsc, eslint, `npm run build` pass
+- [ ] Manual browser check: handles fade in, connect any-to-any, arrowheads, hover/select, label edit, two browsers sync
+
 ## Open Questions
 
 - Spec 09 sets no limit on collaborators per project or on invite rate; none enforced.
