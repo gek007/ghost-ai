@@ -4,12 +4,9 @@ import type { FormEvent } from "react";
 import { EditorDialog } from "@/components/editor/editor-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { useProjectDialogs } from "@/hooks/use-project-dialogs";
+import type { useProjectActions } from "@/hooks/use-project-actions";
 
-type ProjectDialogsProps = Omit<
-  ReturnType<typeof useProjectDialogs>,
-  "projects"
->;
+type ProjectDialogsProps = ReturnType<typeof useProjectActions>;
 
 const FORM_ID = "project-dialog-form";
 
@@ -17,8 +14,9 @@ export function ProjectDialogs({
   dialog,
   name,
   setName,
-  slug,
+  roomId,
   isLoading,
+  error,
   close,
   submit,
 }: ProjectDialogsProps) {
@@ -32,8 +30,14 @@ export function ProjectDialogs({
   };
 
   const hasName = name.trim().length > 0;
-  const canCreate = hasName && slug.length > 0 && !isLoading;
+  const canCreate = hasName && roomId.length > 0 && !isLoading;
   const canRename = hasName && !isLoading;
+
+  const errorMessage = error && (
+    <p role="alert" className="text-xs text-state-error">
+      {error}
+    </p>
+  );
 
   const cancel = (
     <Button variant="ghost" onClick={close} disabled={isLoading}>
@@ -68,10 +72,10 @@ export function ProjectDialogs({
             disabled={isLoading}
           />
           <p className="text-xs text-copy-muted">
-            Slug:{" "}
-            {slug || !name.trim() ? (
+            Room ID:{" "}
+            {roomId || !name.trim() ? (
               <span className="font-mono text-copy-secondary">
-                {slug || "your-project-name"}
+                {roomId || "your-project-name-xxxxxx"}
               </span>
             ) : (
               <span className="text-state-warning">
@@ -79,6 +83,7 @@ export function ProjectDialogs({
               </span>
             )}
           </p>
+          {errorMessage}
         </form>
       </EditorDialog>
 
@@ -100,7 +105,7 @@ export function ProjectDialogs({
           </>
         }
       >
-        <form id={FORM_ID} onSubmit={handleSubmit}>
+        <form id={FORM_ID} onSubmit={handleSubmit} className="grid gap-2">
           <Input
             autoFocus
             className="!text-copy-primary placeholder:text-copy-faint"
@@ -110,6 +115,7 @@ export function ProjectDialogs({
             onChange={(event) => setName(event.target.value)}
             disabled={isLoading}
           />
+          {errorMessage}
         </form>
       </EditorDialog>
 
@@ -119,7 +125,7 @@ export function ProjectDialogs({
         title="Delete project"
         description={
           dialog?.type === "delete"
-            ? `Delete “${dialog.project.name}”? This removes it from the list until you reload the page, since projects are mock data for now.`
+            ? `Delete “${dialog.project.name}”? This permanently removes the project.`
             : undefined
         }
         footer={
@@ -134,7 +140,9 @@ export function ProjectDialogs({
             </Button>
           </>
         }
-      />
+      >
+        {errorMessage}
+      </EditorDialog>
     </>
   );
 }
